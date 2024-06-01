@@ -17,24 +17,22 @@ class Graph:
         self.graphCycle[u].append(v)
         self.graphCycle[v].append(u)
 
-    def checkCycleHelper(self, v, visited, parent):
-        """Utility function for DFS to check graph cycles."""
-        visited[v] = True
-        for i in self.graphCycle[v]:
-            if not visited[i]:
-                if self.checkCycleHelper(i, visited, v):
-                    return True
-            elif parent != i:
-                return True
-        return False
-
     def checkCycle(self):
         """Check all vertices using DFS to detect any cycles in the graph."""
         visited = [False] * (self.V + 1)
+
         for i in range(self.V):
             if not visited[i]:
-                if self.checkCycleHelper(i, visited, -1):
-                    return True
+                stack = [(i, -1)]
+                while stack:
+                    (v, parent) = stack.pop()
+                    if not visited[v]:
+                        visited[v] = True
+                        for neighbor in self.graphCycle[v]:
+                            if not visited[neighbor]:
+                                stack.append((neighbor, v))
+                            elif parent != neighbor:
+                                return True
         return False
 
     def kruskalsAlgorithm(self, outputFile):
